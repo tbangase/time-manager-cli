@@ -1,0 +1,24 @@
+[tasks.list]
+description = "[Not workiing now] List tasks"
+script = ['''
+#!/bin/bash
+grep tasks Makefile.toml | grep '\[task' | cut -d'[' -f2 | cut -d'.' -f2 | cut -d']' -f1
+''']
+workspace = false
+
+[tasks.deploy]
+description = "Deploy to my local environment"
+script = ['''
+#!/bin/bash
+cargo build --release
+cp target/release/time-manager ~/.my_clis/bin/tm
+''']
+workspace = false
+
+[tasks.rm-deploy]
+description = "Remove deployment from my local environment"
+script = ['''
+#!/bin/bash
+rm ~/.my_clis/bin/tm
+''']
+workspace = false

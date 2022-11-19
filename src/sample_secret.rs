@@ -1,0 +1,4 @@
+pub const SCRIPT_ID: &str = "<YOUER SCRIPT_ID HERE>";
+pub const OAUTH_CLIENT_ID: &str = "<YOUR OAUTH_CLIENT_ID HERE>";
+pub const CLIENT_SECRET: &str = "<YOUR CLIENT_SECRET HERE>";
+pub const REFLESH_TOKEN: &str = "<YOUR REFLESH_TOKEN HERE>";
