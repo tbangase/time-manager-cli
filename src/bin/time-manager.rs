@@ -64,7 +64,11 @@ fn print_accepted_message(method: &Methods) {
 fn print_result_message(method: &Methods) {
     match method {
         Methods::Gm => println!(" Now you can start your work! Good luck!"),
-        Methods::Gn => println!(" Now your work ended! Nice job ! ;-)"),
+        Methods::Gn => {
+            println!(" Now your work ended! Nice job ! ;-)");
+            println!(" You can confirm your time on Google Spread Sheet:");
+            println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
+        }
         Methods::Afk => println!(" Now you can go to out! Hava a nice break :-)"),
         Methods::Back => println!(" Now you can back to work! Good luck!"),
     }
