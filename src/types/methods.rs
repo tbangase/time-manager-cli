@@ -1,3 +1,4 @@
+use chrono::Local;
 use clap::ValueEnum;
 use strum::Display;
 
@@ -27,26 +28,38 @@ impl Methods {
         match *self {
             Methods::Gm => {
                 println!(" Now you can start your work! Good luck!");
+                println!();
+                println!(" Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
             }
             Methods::Gn => {
                 println!(" Now your work ended! Nice job ! ;-)");
+                println!();
+                println!(" Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
             }
             Methods::Afk => {
                 println!(" Now you can go to out! Hava a nice break :-)");
+                println!();
+                println!(" Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
             }
             Methods::Back => {
                 println!(" Now you can back to work! Good luck!");
+                println!();
+                println!(" Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
             }
         }
     }
+}
+
+fn now() -> String {
+    Local::now().format("%Y-%m-%d %H:%M:%S").to_string()
 }
 
 #[cfg(test)]

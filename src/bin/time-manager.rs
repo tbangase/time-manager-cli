@@ -7,6 +7,7 @@ use time_manager::{get_access_token, AppScriptRequest, Methods};
 #[derive(Parser, Debug, Getters)]
 #[command(author, version, about, long_about = None)]
 struct Args {
+    // TODO: Add a way to return remain time
     /// Method you want to use
     // #[arg(short, long, value_enum)]
     #[arg(value_enum)]
