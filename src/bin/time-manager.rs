@@ -21,7 +21,7 @@ async fn main() -> anyhow::Result<()> {
 
     let args = Args::parse();
 
-    print_accepted_message(args.method());
+    args.method().print_accepted_message();
 
     let client = Client::new();
     let body = AppScriptRequest::builder()
@@ -46,30 +46,7 @@ async fn main() -> anyhow::Result<()> {
     tracing::debug!("Response: {:#?}", res);
     tracing::debug!("Response Body: {}", res.text().await?);
 
-    print_result_message(args.method());
+    args.method().print_result_message();
 
     Ok(())
-}
-
-fn print_accepted_message(method: &Methods) {
-    match method {
-        Methods::Gm => println!(" Ok, now prepare to start your time..."),
-        Methods::Gn => println!(" Ok, now prepare to finish your time..."),
-        Methods::Afk => println!(" Ok, now prepare to stop your time..."),
-        Methods::Back => println!(" Ok, now prepare to restart your time..."),
-    }
-}
-
-// TODO: Add a message when forgot time stamped
-fn print_result_message(method: &Methods) {
-    match method {
-        Methods::Gm => println!(" Now you can start your work! Good luck!"),
-        Methods::Gn => {
-            println!(" Now your work ended! Nice job ! ;-)");
-            println!(" You can confirm your time on Google Spread Sheet:");
-            println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
-        }
-        Methods::Afk => println!(" Now you can go to out! Hava a nice break :-)"),
-        Methods::Back => println!(" Now you can back to work! Good luck!"),
-    }
 }
