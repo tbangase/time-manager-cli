@@ -11,17 +11,17 @@ pub async fn get_access_token() -> anyhow::Result<String> {
         .grant_type("refresh_token")
         .build();
 
-    // tracing::debug!("Payload: {:#?}", payload);
+    tracing::debug!("Payload: {:#?}", payload);
 
     let request = reqwest::Client::new()
         .post(AUTH_URL)
         .body(serde_json::to_string(&payload)?);
 
-    // tracing::debug!("Request: {:#?}", request);
+    tracing::debug!("Request: {:#?}", request);
 
     let response = request.send().await?;
 
-    // tracing::debug!("Response: {:#?}", response);
+    tracing::debug!("Response: {:#?}", response);
 
     let response_json = response.json::<Response>().await?;
 
