@@ -1,4 +1,5 @@
-use crate::{AUTH_URL, CLIENT_SECRET, OAUTH_CLIENT_ID, REFRESH_TOKEN};
+use crate::{error_trace, AUTH_URL, CLIENT_SECRET, OAUTH_CLIENT_ID, REFRESH_TOKEN};
+use anyhow::Context;
 use derive_getters::Getters;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -23,7 +24,12 @@ pub async fn get_access_token() -> anyhow::Result<String> {
 
     tracing::debug!("Response: {:#?}", response);
 
-    let response_json = response.json::<Response>().await?;
+    let res_str = format!("{:?}", response);
+
+    let response_json = response
+        .json::<Response>()
+        .await
+        .with_context(|| error_trace!("Response Json deserialize error:\n {}", res_str))?;
 
     Ok(response_json.access_token().clone())
 }
@@ -51,6 +57,10 @@ mod get_access_token_tests {
     #[traced_test]
     async fn success_test() {
         let res = get_access_token().await;
+
+        if let Err(ref e) = res {
+            tracing::error!("{:?}", e);
+        }
 
         assert!(res.is_ok());
     }

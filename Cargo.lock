@@ -995,6 +995,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "stdext"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6f3b6b32ae82412fb897ef134867d53a294f57ba5b758f06d71e865352c3e207"
+
+[[package]]
 name = "strsim"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1087,6 +1093,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "stdext",
  "strum",
  "tokio",
  "tracing",
