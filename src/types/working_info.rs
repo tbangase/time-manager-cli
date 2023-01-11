@@ -46,24 +46,29 @@ impl Display for WorkingInfo {
         let average_remain_time = self.average_remain_time();
         let remain_time = self.remain_time();
         writeln!(f, " Your working status ↓ =======================")?;
-        writeln!(f, " |  Status: {:?}", self.status())?;
+        writeln!(f, " |  Status:             {:?}", self.status())?;
         writeln!(
             f,
-            " |  Working time                     : {:0>2}:{:0>2}",
+            " |  Working time                      :  {:0>2}:{:0>2}",
             working_time.num_hours(),
             working_time.num_minutes() % 60
         )?;
         writeln!(
             f,
-            " |  Average remain time in this month: {:0>2}:{:0>2}",
+            " |  Average remain time in this month :  {:0>2}:{:0>2}",
             average_remain_time.num_hours(),
             average_remain_time.num_minutes() % 60
         )?;
         writeln!(
             f,
-            " |  Remain time                      : {:0>2}:{:0>2}",
+            " |  Remain time                       : {}{:0>2}:{:0>2}",
+            if remain_time.num_seconds() < 0 {
+                "-"
+            } else {
+                " "
+            },
             remain_time.num_hours(),
-            remain_time.num_minutes() % 60
+            (remain_time.num_minutes() % 60).abs()
         )?;
         writeln!(f, " | ============================================")
     }

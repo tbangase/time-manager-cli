@@ -1,11 +1,12 @@
+use anyhow::Context;
 use chrono::Local;
 use clap::ValueEnum;
 use reqwest::Response;
 use strum::Display;
 
-use crate::{Payload, WorkingInfo, WorkingStatus};
+use crate::{error_trace, Payload, WorkingInfo, WorkingStatus};
 
-#[derive(ValueEnum, Debug, Clone, Copy, Display)]
+#[derive(ValueEnum, Debug, Clone, Copy, Display, PartialEq, Eq)]
 #[strum(serialize_all = "camelCase")]
 pub enum Methods {
     Gm,
@@ -16,6 +17,7 @@ pub enum Methods {
     Back,
     #[strum(serialize = "getInfo")]
     Info,
+    Auth,
 }
 
 impl Methods {
@@ -26,14 +28,24 @@ impl Methods {
             Methods::Afk => println!(" Ok, now prepare to stop your time..."),
             Methods::Back => println!(" Ok, now prepare to restart your time..."),
             Methods::Info => println!(" Ok, now fetching your information..."),
+            _ => (),
         }
     }
 
     pub async fn handle_response(&self, res: Response) -> anyhow::Result<()> {
         tracing::debug!("Response: {:#?}", res);
 
-        let payload = res.json::<Payload>().await?;
+        let res_str = res
+            .text()
+            .await
+            .with_context(|| error_trace!("Response does not have body."))?;
+
+        let payload: Payload = serde_json::from_str(&res_str).with_context(|| {
+            error_trace!("Cannot deserialize response body from: {:?}", res_str)
+        })?;
+
         let working_info = WorkingInfo::from(payload.response.result);
+
         println!();
         println!("{working_info}");
 
@@ -60,36 +72,37 @@ impl Methods {
             Methods::Gm => {
                 println!(" Now you can start your work! Good luck!");
                 println!();
-                println!(" Time: {}", now());
+                println!(" Current Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
             }
             Methods::Gn => {
                 println!(" Now your work ended! Nice job ! ;-)");
                 println!();
-                println!(" Time: {}", now());
+                println!(" Current Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
             }
             Methods::Afk => {
                 println!(" Now you can go to out! Hava a nice break :-)");
                 println!();
-                println!(" Time: {}", now());
+                println!(" Current Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
             }
             Methods::Back => {
                 println!(" Now you can back to work! Good luck!");
                 println!();
-                println!(" Time: {}", now());
+                println!(" Current Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
             }
             Methods::Info => {
-                println!(" Time: {}", now());
+                println!(" Current Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
             }
+            _ => (),
         }
     }
 }
