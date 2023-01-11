@@ -1,6 +1,9 @@
 use chrono::Local;
 use clap::ValueEnum;
+use reqwest::Response;
 use strum::Display;
+
+use crate::{Payload, WorkingInfo, WorkingStatus};
 
 #[derive(ValueEnum, Debug, Clone, Copy, Display)]
 #[strum(serialize_all = "camelCase")]
@@ -11,6 +14,8 @@ pub enum Methods {
     Afk,
     #[strum(serialize = "rest")]
     Back,
+    #[strum(serialize = "getInfo")]
+    Info,
 }
 
 impl Methods {
@@ -20,7 +25,33 @@ impl Methods {
             Methods::Gn => println!(" Ok, now prepare to finish your time..."),
             Methods::Afk => println!(" Ok, now prepare to stop your time..."),
             Methods::Back => println!(" Ok, now prepare to restart your time..."),
+            Methods::Info => println!(" Ok, now fetching your information..."),
         }
+    }
+
+    pub async fn handle_response(&self, res: Response) -> anyhow::Result<()> {
+        tracing::debug!("Response: {:#?}", res);
+
+        let payload = res.json::<Payload>().await?;
+        let working_info = WorkingInfo::from(payload.response.result);
+        println!();
+        println!("{working_info}");
+
+        match *self {
+            Methods::Afk => {
+                if *working_info.status() == WorkingStatus::Breaking {
+                    tracing::warn!(" You called afk on break!");
+                }
+            }
+            Methods::Back => {
+                if *working_info.status() == WorkingStatus::Working {
+                    tracing::warn!(" You called back on working!");
+                }
+            }
+            _ => (),
+        }
+
+        Ok(())
     }
 
     // TODO: Add a message when forgot time stamped
@@ -50,6 +81,11 @@ impl Methods {
             Methods::Back => {
                 println!(" Now you can back to work! Good luck!");
                 println!();
+                println!(" Time: {}", now());
+                println!(" You can confirm your time on Google Spread Sheet:");
+                println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")
+            }
+            Methods::Info => {
                 println!(" Time: {}", now());
                 println!(" You can confirm your time on Google Spread Sheet:");
                 println!("   https://docs.google.com/spreadsheets/d/1BSRnh5MU6OIW9eFAQxgS2KLC5nxQYMQzuQGqX65kqFI/edit#gid=1849163114")

@@ -44,8 +44,7 @@ async fn main() -> anyhow::Result<()> {
 
     let res = client.execute(req).await?;
 
-    tracing::debug!("Response: {:#?}", res);
-    tracing::debug!("Response Body: {}", res.text().await?);
+    args.method().handle_response(res).await?;
 
     args.method().print_result_message();
 
