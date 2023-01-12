@@ -51,13 +51,13 @@ impl Methods {
 
         match *self {
             Methods::Afk => {
-                if *working_info.status() == WorkingStatus::Breaking {
-                    tracing::warn!(" You called afk on break!");
+                if *working_info.status() == WorkingStatus::Working {
+                    tracing::warn!(" You called afk but still on working!");
                 }
             }
             Methods::Back => {
-                if *working_info.status() == WorkingStatus::Working {
-                    tracing::warn!(" You called back on working!");
+                if *working_info.status() == WorkingStatus::Breaking {
+                    tracing::warn!(" You called back but still on breaking!");
                 }
             }
             _ => (),

@@ -1,4 +1,4 @@
-use chrono::Duration;
+use chrono::{DateTime, Duration, Local};
 use std::fmt::Display;
 
 use derive_getters::Getters;
@@ -14,6 +14,7 @@ pub struct WorkingInfo {
     working_time: Duration,
     average_remain_time: Duration,
     remain_time: Duration,
+    estimeted_end_time: DateTime<Local>,
     status: WorkingStatus,
 }
 
@@ -35,6 +36,7 @@ impl From<PayloadResult> for WorkingInfo {
             working_time,
             average_remain_time,
             remain_time: average_remain_time - working_time,
+            estimeted_end_time: Local::now() + average_remain_time - working_time,
             status: *payload.status(),
         }
     }
@@ -69,6 +71,11 @@ impl Display for WorkingInfo {
             },
             remain_time.num_hours(),
             (remain_time.num_minutes() % 60).abs()
+        )?;
+        writeln!(
+            f,
+            " |  Estimated finished time today     :  {}",
+            self.estimeted_end_time()
         )?;
         writeln!(f, " | ============================================")
     }
