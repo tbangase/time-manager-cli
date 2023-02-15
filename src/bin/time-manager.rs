@@ -1,8 +1,11 @@
+use anyhow::Context;
 use clap::Parser;
 use derive_getters::Getters;
 use reqwest::{Client, Response};
-use time_manager::SCRIPT_ID;
-use time_manager::{get_access_token, AppScriptRequest, Methods};
+use time_manager::{
+    error_trace, get_access_token, overwrite_refresh_token, AppScriptRequest, Methods,
+};
+use time_manager::{OAUTH_CLIENT_ID, REDIRECT_URI, SCOPE, SCRIPT_ID};
 
 #[derive(Parser, Debug, Getters)]
 #[command(author, version, about, long_about = None)]
@@ -23,12 +26,28 @@ async fn main() -> anyhow::Result<()> {
 
     method.print_accepted_message();
 
-    if method == &Methods::Auth {
-        unimplemented!();
-    } else {
-        let res = call_gas(*method).await?;
-        method.handle_response(res).await?;
-    }
+    match method {
+        Methods::Auth => {
+            let url = format!("https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id={OAUTH_CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&access_type=offline");
+            open::that(url).with_context(|| error_trace!("Fail to open auth url"))?;
+        }
+        Methods::Refresh => {
+            overwrite_refresh_token().await?;
+        }
+        _ => {
+            let res = call_gas(*method).await?;
+            method.handle_response(res).await?;
+        }
+    };
+    // if method == &Methods::Auth {
+    //     let url = format!("https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id={OAUTH_CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&access_type=offline");
+    //     open::that(url).with_context(|| error_trace!("Fail to open auth url"))?;
+    // } else if method == &Methods::Refresh {
+    //     unimplemented!();
+    // } else {
+    //     let res = call_gas(*method).await?;
+    //     method.handle_response(res).await?;
+    // }
 
     method.print_result_message();
 

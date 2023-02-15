@@ -16,5 +16,7 @@ pub struct PayloadResponse {
 pub struct PayloadResult {
     working_hours: f64,
     average_remain_hours: f64,
+    minimum_average_remain_hours: f64,
     status: WorkingStatus,
+    rest_timestamp: Option<i64>,
 }

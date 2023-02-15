@@ -18,6 +18,7 @@ pub enum Methods {
     #[strum(serialize = "getInfo")]
     Info,
     Auth,
+    Refresh,
 }
 
 impl Methods {
