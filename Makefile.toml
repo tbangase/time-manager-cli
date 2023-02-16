@@ -12,6 +12,7 @@ script = ['''
 #!/bin/bash
 cargo build --release
 cp target/release/time-manager ~/.my_clis/bin/tm
+cargo clean
 ''']
 workspace = false
 
